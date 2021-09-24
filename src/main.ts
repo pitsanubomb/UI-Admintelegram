@@ -8,11 +8,13 @@ import { ConfigProvider } from "ant-design-vue";
 import ProLayout, { PageContainer } from "@ant-design-vue/pro-layout";
 import App from "./App.vue";
 import icon from "./icon";
+import store from "./store";
 
 createApp(App)
   .use(route)
   .use(ConfigProvider)
   .use(icon)
+  .use(store)
   .use(ProLayout)
   .use(PageContainer)
   .mount("#app");
