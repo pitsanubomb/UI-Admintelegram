@@ -1,29 +1,45 @@
 <template>
-  <a-result
-    status="404"
-    :style="{
-      height: '100%',
-      background: '#fff',
-    }"
-    title="Hello World"
-    sub-title="Sorry, you are not authorized to access this page."
+  <a-table
+    :dataSource="userList.response.data"
+    :columns="columns"
+    :loading="userList.loading"
   >
-    <template #extra>
-      <a-button type="primary" @click="handleClick">Back Home</a-button>
+    <template #call="{ record }">
+      <span>
+        <a :href="`tel:` + record.phone">+{{ record.phone }}</a>
+      </span>
     </template>
-  </a-result>
+    <template #action="{ record }">
+      <span>
+        <a :href="`user/`+record.id">Message</a>
+      </span>
+    </template>
+  </a-table>
 </template>
-
 <script lang="ts" setup>
-import {
-  Result as AResult,
-  Button as AButton,
-  Select as ASelect,
-  message,
-} from "ant-design-vue";
-const { Option: ASelectOption, OptGroup: ASelectOptGroup } = ASelect;
+import getAllUser from "../../hook/users";
 
-const handleClick = () => {
-  message.info("Button clicked");
-};
+const userList: any = getAllUser();
+const columns = [
+  {
+    title: "Username",
+    dataIndex: "username",
+    key: "username",
+  },
+  {
+    title: "Telegramname",
+    dataIndex: "firstname",
+    key: "firstname",
+  },
+  {
+    title: "Call",
+    key: "call",
+    slots: { customRender: "call" },
+  },
+  {
+    title: "Action",
+    key: "action",
+    slots: { customRender: "action" },
+  },
+];
 </script>
