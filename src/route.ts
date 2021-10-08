@@ -2,10 +2,9 @@ import BasicLayout from "./layouts/BasicLayout.vue";
 import ViewLayout from "./layouts/ViewLayout.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
-
 export default createRouter({
   history: createWebHistory(),
-  routes: [ 
+  routes: [
     {
       path: "/",
       name: "index",
@@ -25,6 +24,12 @@ export default createRouter({
               name: "user",
               meta: { title: "List", icon: "TeamOutlined" },
               component: () => import("./views/user/userlist.vue"),
+            },
+            {
+              path: "user/message",
+              name: "message",
+              meta: { title: "Message", icon: "TeamOutlined" },
+              component: () => import("./views/user/message.vue"),
             },
           ],
         },

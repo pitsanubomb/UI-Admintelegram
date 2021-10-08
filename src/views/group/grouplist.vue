@@ -1,8 +1,8 @@
 <template>
   <a-table
-    :dataSource="userList.response.data"
+    :dataSource="groupList.response.data"
     :columns="columns"
-    :loading="userList.loading"
+    :loading="groupList.loading"
   >
     <template #call="{ record }">
       <span>
@@ -11,15 +11,15 @@
     </template>
     <template #action="{ record }">
       <span>
-        <a :href="`user/message/`+record.id">Message</a>
+        <a :href="`group/message/` + record.id">Message</a>
       </span>
     </template>
   </a-table>
 </template>
 <script lang="ts" setup>
-import getAllUser from "../../hook/users";
+import getAllGroups from "../../hook/groups";
 
-const userList: any = getAllUser();
+const groupList: any = getAllGroups();
 const columns = [
   {
     title: "Username",
