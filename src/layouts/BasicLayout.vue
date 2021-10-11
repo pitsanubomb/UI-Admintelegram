@@ -41,7 +41,17 @@
         </a-dropdown>
       </div>
     </template>
-    <router-view />
+    <a-layout-content
+      :style="{
+        margin: '24px 16px',
+        padding: '24px',
+        background: '#fff',
+        minHeight: '80vh',
+      }"
+    >
+       <router-view />
+    </a-layout-content>
+   
   </pro-layout>
 </template>
 

@@ -4,11 +4,6 @@
     :columns="columns"
     :loading="groupList.loading"
   >
-    <template #call="{ record }">
-      <span>
-        <a :href="`tel:` + record.phone">+{{ record.phone }}</a>
-      </span>
-    </template>
     <template #action="{ record }">
       <span>
         <a :href="`group/message/` + record.id">Message</a>
@@ -22,19 +17,9 @@ import getAllGroups from "../../hook/groups";
 const groupList: any = getAllGroups();
 const columns = [
   {
-    title: "Username",
-    dataIndex: "username",
-    key: "username",
-  },
-  {
-    title: "Telegramname",
-    dataIndex: "firstname",
-    key: "firstname",
-  },
-  {
-    title: "Call",
-    key: "call",
-    slots: { customRender: "call" },
+    title: "Groupname",
+    dataIndex: "groupname",
+    key: "groupname",
   },
   {
     title: "Action",
