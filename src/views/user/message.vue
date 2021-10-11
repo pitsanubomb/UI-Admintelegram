@@ -46,6 +46,7 @@
           </div>
         </a-upload>
       </a-form-item>
+      aa
     </template>
     <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">Create</a-button>
