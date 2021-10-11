@@ -37,7 +37,22 @@ export default createRouter({
           path: "/app/group",
           name: "group",
           meta: { title: "Group", icon: "TeamOutlined" },
-          component: () => import("./views/group/grouplist.vue"),
+          // component: () => import("./views/group/grouplist.vue"),
+          component: ViewLayout,
+          children: [
+            {
+              path: "list",
+              name: "grouplist",
+              meta: { title: "List", icon: "AuditOutlined" },
+              component: () => import("./views/group/grouplist.vue"),
+            },
+            {
+              path: "message",
+              name: "message",
+              meta: { title: "Message", icon: "MessageOutlined" },
+              component: () => import("./views/group/message.vue"),
+            },
+          ],
         },
       ],
     },

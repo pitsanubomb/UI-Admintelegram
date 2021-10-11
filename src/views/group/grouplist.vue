@@ -4,11 +4,11 @@
     :columns="columns"
     :loading="groupList.loading"
   >
-    <template #action="{ record }">
+    <!-- <template #action="{ record }">
       <span>
         <a :href="`group/message/` + record.id">Message</a>
       </span>
-    </template>
+    </template> -->
   </a-table>
 </template>
 <script lang="ts" setup>
@@ -21,10 +21,10 @@ const columns = [
     dataIndex: "groupname",
     key: "groupname",
   },
-  {
-    title: "Action",
-    key: "action",
-    slots: { customRender: "action" },
-  },
+  // {
+  //   title: "Action",
+  //   key: "action",
+  //   slots: { customRender: "action" },
+  // },
 ];
 </script>

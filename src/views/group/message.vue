@@ -13,12 +13,12 @@
         <a-radio value="image">Image</a-radio>
       </a-radio-group>
     </a-form-item>
-    <a-form-item label="Select user" name="user">
+    <a-form-item label="Select group" name="user">
       <a-select
         v-model:value="formState.user"
-        placeholder="please select users"
+        placeholder="please group"
         mode="multiple"
-        :options="option.response.data.map((u:any) => ({value:u.id,label:u.username}))"
+        :options="option.response.data.map((u:any) => ({value:u.id,label:u.groupname}))"
       >
       </a-select>
     </a-form-item>
@@ -67,8 +67,8 @@
 import { ValidateErrorEntity } from "ant-design-vue/es/form/interface";
 import { message } from "ant-design-vue";
 import { defineComponent, ref, reactive, toRaw, UnwrapRef } from "vue";
-import getAllUser from "../../hook/users";
 import button from "ant-design-vue/lib/button";
+import getAllGroups from "../../hook/groups";
 
 interface FormState {
   user: [];
@@ -112,7 +112,7 @@ const rules = {
   user: [
     {
       required: true,
-      message: "Please select user",
+      message: "Please select group",
       trigger: "change",
       type: "array",
     },
@@ -131,7 +131,7 @@ const rules = {
   ],
 };
 
-const option: any = getAllUser();
+const option: any = getAllGroups();
 
 //const option = getAllUser()
 const loading = ref<boolean>(false);
@@ -204,7 +204,7 @@ const onSubmit = () => {
           };
 
           fetch(
-            "https://api-telegramadmin.herokuapp.com/telegram/",
+            "https://api-telegramadmin.herokuapp.com/telegram/group",
             requestOptions
           )
             .then((response) => message.success(`ส่งข้อความสำเร็จ`))
@@ -235,7 +235,7 @@ const onSubmit = () => {
           };
 
           fetch(
-            "https://api-telegramadmin.herokuapp.com/telegram/image",
+            "https://api-telegramadmin.herokuapp.com/telegram/group/image",
             requestOptions
           )
             .then((response) => message.success(`ส่งข้อความสำเร็จ`))
