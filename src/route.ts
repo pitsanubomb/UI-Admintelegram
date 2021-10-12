@@ -13,21 +13,21 @@ export default createRouter({
       redirect: "/app",
       children: [
         {
-          path: "/app",
+          path: "/app/user",
           name: "app",
           meta: { title: "User", icon: "UserOutlined" },
           redirect: "/app/user",
           component: ViewLayout,
           children: [
             {
-              path: "user",
+              path: "list",
               name: "user",
               meta: { title: "List", icon: "AuditOutlined" },
               component: () => import("./views/user/userlist.vue"),
             },
             {
-              path: "user/message",
-              name: "message",
+              path: "message",
+              name: "usermessage",
               meta: { title: "Message", icon: "MessageOutlined" },
               component: () => import("./views/user/message.vue"),
             },
