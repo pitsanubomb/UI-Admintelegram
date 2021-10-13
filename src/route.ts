@@ -10,18 +10,18 @@ export default createRouter({
       name: "index",
       meta: { title: "Home" },
       component: BasicLayout,
-      redirect: "/app",
+      redirect: "/app/user/",
       children: [
         {
           path: "/app/user",
-          name: "app",
+          name: "user",
           meta: { title: "User", icon: "UserOutlined" },
-          redirect: "/app/user",
+          redirect: "/app/user/list/",
           component: ViewLayout,
           children: [
             {
               path: "list",
-              name: "user",
+              name: "userlist",
               meta: { title: "List", icon: "AuditOutlined" },
               component: () => import("./views/user/userlist.vue"),
             },
