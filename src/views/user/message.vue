@@ -28,12 +28,13 @@
       </a-form-item>
     </template>
     <template v-else>
-      <!-- <a-form-item label="Upload Image">
+      <a-form-item label="Upload Image">
         <a-upload
           v-model:file-list="formState.fileImage"
-          name="avatar"
+          name="file"
           list-type="picture-card"
           class="avatar-uploader"
+          action="https://api-telegramadmin.herokuapp.com/upload"
           :show-upload-list="false"
           :before-upload="beforeUpload"
           @change="handleChange"
@@ -45,10 +46,10 @@
             <div class="ant-upload-text">Upload</div>
           </div>
         </a-upload>
-      </a-form-item> -->
-      <a-form-item label="imageurl" name="imageUrl">
-        <a-input v-model:value="formState.imageUrl" />
       </a-form-item>
+      <!-- <a-form-item label="imageurl" name="imageUrl">
+        <a-input v-model:value="formState.imageUrl" />
+      </a-form-item> -->
       <a-form-item name="buttonUrl1" label="Link">
         <a-input v-model:value="formState.buttonUrl1" />
       </a-form-item>
@@ -88,7 +89,7 @@ interface FileItem {
   uid: string;
   name?: string;
   status?: string;
-  response?: string;
+  response?: string | any;
   url?: string;
   type?: string;
   size: number;
@@ -98,12 +99,6 @@ interface FileItem {
 interface FileInfo {
   file: FileItem;
   fileList: FileItem[];
-}
-
-function getBase64(img: Blob, callback: (base64Url: string) => void) {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result as string));
-  reader.readAsDataURL(img);
 }
 
 const labelCol = { span: 6 };
@@ -133,7 +128,6 @@ const rules = {
 
 const option: any = getAllUser();
 
-//const option = getAllUser()
 const loading = ref<boolean>(false);
 const imageUrl = ref<string>("");
 const formRef = ref();
@@ -156,12 +150,13 @@ const handleChange = (info: FileInfo) => {
     loading.value = true;
     return;
   }
+  if (info.file.status === "done") {
+    loading.value = false;
+    imageUrl.value = `https://api-telegramadmin.herokuapp.com/upload/img/${info.file.response.filename}`;
+  }
   if (info.file.status === "error") {
-    getBase64(info.file.originFileObj, (base64Url: string) => {
-      imageUrl.value = base64Url;
-      loading.value = false;
-    });
-    // loading.value = false;
+    loading.value = false;
+    message.error("upload error");
   }
 };
 
@@ -211,7 +206,6 @@ const onSubmit = () => {
             .then((result) => console.log(result))
             .catch((error) => message.error(error));
         } else {
-          // alert(`aaaaaaa`)
           let myHeaders = new Headers();
           myHeaders.append("Content-Type", "application/json");
 
@@ -220,12 +214,10 @@ const onSubmit = () => {
 
           let raw = JSON.stringify({
             id: e,
-            image: body.imageUrl,
+            image: imageUrl.value,
             show: 1,
             button: newObj,
           });
-
-          // console.log(bo);
 
           let requestOptions: any = {
             method: "POST",
