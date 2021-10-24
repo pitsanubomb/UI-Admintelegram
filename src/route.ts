@@ -54,6 +54,27 @@ export default createRouter({
             },
           ],
         },
+        {
+          path: "/app/channel",
+          name: "channel",
+          meta: { title: "Channel", icon: "TeamOutlined" },
+          // component: () => import("./views/group/grouplist.vue"),
+          component: ViewLayout,
+          children: [
+            {
+              path: "list",
+              name: "chanellist",
+              meta: { title: "List", icon: "AuditOutlined" },
+              component: () => import("./views/channel/channellist.vue"),
+            },
+            // {
+            //   path: "message",
+            //   name: "message",
+            //   meta: { title: "Message", icon: "MessageOutlined" },
+            //   component: () => import("./views/group/message.vue"),
+            // },
+          ],
+        },
       ],
     },
   ],

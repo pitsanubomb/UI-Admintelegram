@@ -14,4 +14,7 @@ export default {
   async getGroup() {
     return await this.get(`group`);
   },
+  async getChannel() {
+    return await this.get(`channel/all`);
+  },
 };

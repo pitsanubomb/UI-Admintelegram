@@ -4,11 +4,6 @@
     :columns="columns"
     :loading="groupList.loading"
   >
-    <!-- <template #action="{ record }">
-      <span>
-        <a :href="`group/message/` + record.id">Message</a>
-      </span>
-    </template> -->
   </a-table>
 </template>
 <script lang="ts" setup>
