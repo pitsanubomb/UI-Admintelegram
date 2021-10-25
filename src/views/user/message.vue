@@ -28,7 +28,7 @@
       </a-form-item>
     </template>
     <template v-else>
-      <a-form-item label="Upload Image">
+      <a-form-item name="upload" label="Upload Image">
         <a-upload
           v-model:file-list="formState.fileImage"
           name="file"
@@ -114,6 +114,9 @@ const rules = {
   ],
   message: [
     { required: true, message: "Please input message", trigger: "blur" },
+  ],
+  upload: [
+    { required: true, message: "Please input imagelink", trigger: "change" },
   ],
   imageUrl: [
     { required: true, message: "Please input imagelink", trigger: "blur" },
@@ -230,7 +233,10 @@ const onSubmit = () => {
             "https://api-telegramadmin.herokuapp.com/telegram/image",
             requestOptions
           )
-            .then((response) => message.success(`ส่งข้อความสำเร็จ`))
+            .then((response) => {
+              message.success(`ส่งข้อความสำเร็จ`);
+              formRef.value.resetFields();
+            })
             .then((result) => console.log(result))
             .catch((error) => message.error(error));
         }

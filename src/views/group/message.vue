@@ -11,6 +11,7 @@
       <a-radio-group name="radioGroup" v-model:value="formState.checked">
         <a-radio value="message">Message</a-radio>
         <a-radio value="image">Image</a-radio>
+        <a-radio value="video">Video</a-radio>
       </a-radio-group>
     </a-form-item>
     <a-form-item label="Select group" name="user">
@@ -27,13 +28,31 @@
         <a-input v-model:value="formState.message" />
       </a-form-item>
     </template>
+    <template v-else-if="formState.checked === 'video'">
+      <a-form-item label="Upload Video">
+        <a-upload
+          v-model:file-list="formState.fileVideo"
+          name="file"
+          :multiple="false"
+          :before-upload="beforeUploadVideo"
+          action="https://api-telegramadmin.herokuapp.com/upload/video"
+          @change="handleChangeVideo"
+        >
+          <a-button>
+            <upload-outlined></upload-outlined>
+            Click to Upload
+          </a-button>
+        </a-upload>
+      </a-form-item>
+    </template>
     <template v-else>
       <a-form-item label="Upload Image">
         <a-upload
           v-model:file-list="formState.fileImage"
-          name="avatar"
+          name="file"
           list-type="picture-card"
           class="avatar-uploader"
+          action="https://api-telegramadmin.herokuapp.com/upload"
           :show-upload-list="false"
           :before-upload="beforeUpload"
           @change="handleChange"
@@ -52,13 +71,24 @@
       <a-form-item name="buttonUrl1" label="Button text">
         <a-input v-model:value="formState.buttontext1" />
       </a-form-item>
+      <a-form-item name="buttonUrl2" label="Link">
+        <a-input v-model:value="formState.buttonUrl2" />
+      </a-form-item>
+      <a-form-item name="buttonText2" label="Button text">
+        <a-input v-model:value="formState.buttontext2" />
+      </a-form-item>
+      <a-form-item name="buttonUrl3" label="Link">
+        <a-input v-model:value="formState.buttonUrl3" />
+      </a-form-item>
+      <a-form-item name="buttonText3" label="Button text">
+        <a-input v-model:value="formState.buttontext3" />
+      </a-form-item>
     </template>
     <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">Create</a-button>
       <a-button style="margin-left: 10px" @click="resetForm">Cancel</a-button>
     </a-form-item>
   </a-form>
-  <canvas id="aImage"></canvas>
 </template>
 <script lang="ts" setup>
 import { ValidateErrorEntity } from "ant-design-vue/es/form/interface";
@@ -72,6 +102,7 @@ interface FormState {
   message: string;
   checked: string;
   fileImage: [];
+  fileVideo: [];
   buttonUrl1: string;
   buttonUrl2: string;
   buttonUrl3: string;
@@ -94,12 +125,6 @@ interface FileItem {
 interface FileInfo {
   file: FileItem;
   fileList: FileItem[];
-}
-
-function getBase64(img: Blob, callback: (base64Url: string) => void) {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result as string));
-  reader.readAsDataURL(img);
 }
 
 const labelCol = { span: 6 };
@@ -138,6 +163,7 @@ const formState: UnwrapRef<FormState> = reactive({
   checked: "message",
   imageUrl: "",
   fileImage: [],
+  fileVideo: [],
   buttonUrl1: "",
   buttonUrl2: "",
   buttonUrl3: "",
@@ -161,6 +187,21 @@ const handleChange = (info: FileInfo) => {
   }
 };
 
+const handleChangeVideo = (info: FileInfo) => {
+  if (info.file.status === "uploading") {
+    loading.value = true;
+    return;
+  }
+  if (info.file.status === "done") {
+    loading.value = false;
+    imageUrl.value = `https://api-telegramadmin.herokuapp.com/upload/video/${info.file.response.filename}`;
+  }
+  if (info.file.status === "error") {
+    loading.value = false;
+    message.error("upload error");
+  }
+};
+
 const beforeUpload = (file: FileItem) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
   if (!isJpgOrPng) {
@@ -171,6 +212,19 @@ const beforeUpload = (file: FileItem) => {
     message.error("Image must smaller than 2MB!");
   }
   return isJpgOrPng && isLt2M;
+};
+
+const beforeUploadVideo = (file: FileItem) => {
+  // console.log(file.type)
+  const isVideo = file.type === "video/mp4";
+  if (!isVideo) {
+    message.error("You can only upload mp4 file!");
+  }
+  const isLt40M = file.size / 1024 / 1024 <= 40;
+  if (!isLt40M) {
+    message.error("Image must smaller than 40MB!");
+  }
+  return isVideo && isLt40M;
 };
 
 const resetForm = () => {
@@ -206,22 +260,55 @@ const onSubmit = () => {
             .then((response) => message.success(`ส่งข้อความสำเร็จ`))
             .then((result) => console.log(result))
             .catch((error) => message.error(error));
-        } else {
-          // alert(`aaaaaaa`)
+        } else if (body.checked === `video`) {
           let myHeaders = new Headers();
           myHeaders.append("Content-Type", "application/json");
+
+          let raw = JSON.stringify({
+            id: e,
+            video: imageUrl.value,
+          });
+
+          let requestOptions: any = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow",
+          };
+          fetch(
+            "https://api-telegramadmin.herokuapp.com/telegram/group/video",
+            requestOptions
+          )
+            .then((response) => message.success(`ส่งข้อความสำเร็จ`))
+            .then((result) => console.log(result))
+            .catch((error) => message.error(error));
+        } else {
+          let myHeaders = new Headers();
+          myHeaders.append("Content-Type", "application/json");
+
+          let show = 1;
+          let b = [];
 
           let newObj: any = {};
           newObj[body.buttontext1] = body.buttonUrl1;
 
+          if (body.buttontext2 !== "") {
+            newObj[body.buttontext2] = body.buttonUrl2;
+            show = 2;
+          }
+
+          if (body.buttontext3 !== "") {
+            newObj[body.buttontext3] = body.buttonUrl3;
+            show = 2;
+          }
+          b.push(newObj);
+
           let raw = JSON.stringify({
             id: e,
             image: imageUrl.value,
-            show: 1,
-            button: newObj,
+            show: show,
+            button: b[0],
           });
-
-          // console.log(bo);
 
           let requestOptions: any = {
             method: "POST",
