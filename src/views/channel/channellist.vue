@@ -1,7 +1,7 @@
 <template>
   <a-modal
     v-if="option.loading === false"
-    title="Title"
+    title="Foward message"
     v-model:visible="visible"
     :confirm-loading="confirmLoading"
     @ok="handleOk"
