@@ -241,6 +241,7 @@ const onSubmit = () => {
             .catch((error) => message.error(error));
         }
       });
+      formRef.value.resetFields();
     })
     .catch((error: ValidateErrorEntity<FormState>) => {
       console.log("error", error);
