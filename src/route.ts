@@ -67,12 +67,12 @@ export default createRouter({
               meta: { title: "List", icon: "AuditOutlined" },
               component: () => import("./views/channel/channellist.vue"),
             },
-            // {
-            //   path: "message",
-            //   name: "message",
-            //   meta: { title: "Message", icon: "MessageOutlined" },
-            //   component: () => import("./views/group/message.vue"),
-            // },
+            {
+              path: "message",
+              name: "channelmessage",
+              meta: { title: "Message", icon: "MessageOutlined" },
+              component: () => import("./views/channel/message.vue"),
+            },
           ],
         },
       ],

@@ -12,6 +12,7 @@
         <a-radio value="message">Message</a-radio>
         <a-radio value="image">Image</a-radio>
         <a-radio value="video">Video</a-radio>
+        <a-radio value="media">Media</a-radio>
       </a-radio-group>
     </a-form-item>
     <a-form-item label="Select group" name="user">
@@ -43,6 +44,26 @@
             Click to Upload
           </a-button>
         </a-upload>
+      </a-form-item>
+    </template>
+    <template v-else-if="formState.checked === 'media'">
+      <a-form-item label="Upload Video">
+        <a-upload
+          v-model:file-list="formState.fileVideo"
+          name="file"
+          :multiple="false"
+          :before-upload="beforeUploadMedia"
+          action="https://api-telegramadmin.herokuapp.com/upload/media"
+          @change="handleChangeMedia"
+        >
+          <a-button>
+            <upload-outlined></upload-outlined>
+            Click to Upload
+          </a-button>
+        </a-upload>
+      </a-form-item>
+      <a-form-item label="Caption" name="caption">
+        <a-textarea v-model:value="formState.caption" />
       </a-form-item>
     </template>
     <template v-else>
@@ -109,6 +130,7 @@ interface FormState {
   buttontext1: string;
   buttontext2: string;
   buttontext3: string;
+  caption: string;
 }
 
 interface FileItem {
@@ -156,6 +178,7 @@ const option: any = getAllGroups();
 
 const loading = ref<boolean>(false);
 const imageUrl = ref<string>("");
+const mediaList: any = [];
 const formRef = ref();
 const formState: UnwrapRef<FormState> = reactive({
   user: [],
@@ -170,6 +193,7 @@ const formState: UnwrapRef<FormState> = reactive({
   buttontext1: "",
   buttontext2: "",
   buttontext3: "",
+  caption: "",
 });
 
 const handleChange = (info: FileInfo) => {
@@ -202,6 +226,38 @@ const handleChangeVideo = (info: FileInfo) => {
   }
 };
 
+const handleChangeMedia = (info: FileInfo) => {
+  if (info.file.status === "uploading") {
+    loading.value = true;
+    return;
+  }
+  if (info.file.status === "done") {
+    loading.value = false;
+    let type = info.file.type?.match(/image/g);
+    let vtype = info.file.type?.match(/video/g);
+    // if(type === "")
+    if (type) {
+      mediaList.push({
+        type: "photo",
+        media: {
+          url: `https://api-telegramadmin.herokuapp.com/upload/meida/${info.file.response.filename}`,
+        },
+      });
+    } else if (vtype) {
+      mediaList.push({
+        type: "video",
+        media: {
+          url: `https://api-telegramadmin.herokuapp.com/upload/meida/${info.file.response.filename}`,
+        },
+      });
+    }
+  }
+  if (info.file.status === "error") {
+    loading.value = false;
+    message.error("upload error");
+  }
+};
+
 const beforeUpload = (file: FileItem) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
   if (!isJpgOrPng) {
@@ -225,6 +281,15 @@ const beforeUploadVideo = (file: FileItem) => {
     message.error("Image must smaller than 40MB!");
   }
   return isVideo && isLt40M;
+};
+
+const beforeUploadMedia = (file: FileItem) => {
+  // console.log(file.type)
+  const isLt40M = file.size / 1024 / 1024 <= 40;
+  if (!isLt40M) {
+    message.error("Image must smaller than 40MB!");
+  }
+  return isLt40M;
 };
 
 const resetForm = () => {
@@ -277,6 +342,31 @@ const onSubmit = () => {
           };
           fetch(
             "https://api-telegramadmin.herokuapp.com/telegram/group/video",
+            requestOptions
+          )
+            .then((response) => message.success(`ส่งข้อความสำเร็จ`))
+            .then((result) => console.log(result))
+            .catch((error) => message.error(error));
+        } else if (body.checked === `media`) {
+          let myHeaders = new Headers();
+          myHeaders.append("Content-Type", "application/json");
+
+          mediaList[0].caption = body.caption;
+
+          let raw = JSON.stringify({
+            id: e,
+            media: mediaList,
+          });
+
+          let requestOptions: any = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow",
+          };
+
+          fetch(
+            "https://api-telegramadmin.herokuapp.com/telegram/media",
             requestOptions
           )
             .then((response) => message.success(`ส่งข้อความสำเร็จ`))
